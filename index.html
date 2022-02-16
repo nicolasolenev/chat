@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,100&display=swap" rel="stylesheet">
+  <title>Chat</title>
+</head>
+
+<body class="body">
+  <main class="main">
+    <div class="wrapper">
+      <div class="chat">
+
+        <div class="chat__header">
+          <button id="settings_btn" class="chat__btn">Настройки</button>
+          <button class="chat__btn">Выйти</button>
+        </div>
+        <div class="chat__window_wrapper">
+          <div id="chat_window" class="chat__window">
+
+            <template id="message_template">
+              <div class="chat__message">
+                <div class="message">Я: Добрый день!</div>
+                <span class="time">18:45</span>
+              </div>
+            </template>
+
+            <div class="chat__message any_message">
+              <span class="message">Собеседник мой: Добрый день!</span>
+              <span class="time">18:45</span>
+            </div>
+
+            <div class="chat__message any_message">
+              <span class="message">Собеседник мой: А это второе и, кажется, оно очень
+                длинное, чтобы поместиться на
+                одной строке</span>
+              <span class="time">18:45</span>
+            </div>
+
+          </div>
+        </div>
+
+
+
+        <!-- <input id="text" class="chat__input" type="text" placeholder="сообщение..">
+          <button id="send_btn" class="chat__btn">-></button> -->
+        <form id="send_message_form" class="chat__footer" onsubmit="return false">
+          <input type="text" id="text" class="chat__input" placeholder="сообщение..">
+          <button class="chat__btn">-></button>
+        </form>
+
+
+        <div id="settings_menu" class="settings_wrapper">
+          <div class="settings">
+            <div class="settings__header">
+              <div>Настройки</div>
+              <div id="exit" class="exit">+</div>
+            </div>
+
+            <div class="settings__main">
+              <div class="title">Имя в чате</div>
+              <input class="settings__input" type="text" placeholder="имя">
+              <button class="chat__btn">-></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>
