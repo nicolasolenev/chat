@@ -47,6 +47,10 @@ UI.EXIT_BTN.addEventListener('click', function () {
 
 // <-- F U N C T I O N S -->
 
+function scrollChatWindowToBottom() {
+  UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
+}
+
 function getTime() {
   const now = new Date();
   let hours = now.getHours();
@@ -54,10 +58,6 @@ function getTime() {
   let minutes = now.getMinutes();
   minutes = minutes < 10 ? '0' + minutes : minutes;
   return hours + ':' + minutes;
-}
-
-function scrollChatWindowToBottom() {
-  UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
 }
 
 function getPopup(obj) {
@@ -69,27 +69,20 @@ function getPopup(obj) {
   popup.querySelector('.popup__exit').addEventListener('click', function () {
     this.closest('.popup_wrapper').remove();
   });
-  if (obj.title === settings.title) {
-    popup.querySelector('.popup__main').classList.add('popup__settings');
+
+  switch (obj.title) {
+    case settings.title:
+      popup.querySelector('.popup__main').classList.add('popup__settings');
+      popup.querySelector('.chat__btn').addEventListener('click', settingsHendler);
+      break;
+    case authorization.title:
+      popup.querySelector('.chat__btn').addEventListener('click', authorizationHendler);
+      break;
+    case verification.title:
+      popup.querySelector('.chat__btn').addEventListener('click', verificationHendler);
+      break;
   }
-  if (obj.title === authorization.title) {
-    popup.querySelector('.chat__btn').addEventListener('click', authorizationHendler);
-  }
-  if (obj.title === verification.title) {
-    popup.querySelector('.chat__btn').addEventListener('click', function () {
-      setTimeout(function () {
-        document.querySelector('.popup_wrapper').remove();
-      }, 1000);
-      setTimeout(function () {
-        document.querySelector('.any_message').classList.add('visible');
-      }, 4000);
-      setTimeout(function () {
-        const secondMessage = document.querySelector('.any_message').cloneNode('deep');
-        secondMessage.querySelector('.message').innerText = 'Ты справился, молодец!';
-        UI.CHAT_WINDOW.append(secondMessage);
-      }, 10000);
-    });
-  }
+
   UI.CHAT.append(popup);
 }
 
@@ -97,24 +90,71 @@ function getPopup(obj) {
 function authorizationHendler() {
   const mailField = this.previousElementSibling;
   if (!mailField.value) return
-  const mail = {
-    email: this.previousElementSibling.value,
-  }
   fetch(URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
     },
-    body: JSON.stringify(mail)
+    body: JSON.stringify({ email: this.previousElementSibling.value })
+  })
+    .then(response => response.json())
+    .then(function (data) {
+      console.log('Создали аккаунт:', data);
+      document.querySelector('.popup_wrapper').remove();
+      getPopup(verification);
+    });
+  // setTimeout(function () {
+  //   document.querySelector('.popup_wrapper').remove();
+  //   getPopup(verification);
+  //   console.log();
+  // }, 2000);
+
+}
+
+function verificationHendler() {
+  const codeField = this.previousElementSibling;
+  if (!codeField.value) return
+  saveInCookie('chat_code', codeField.value);
+  console.log('Сохранили код в куки');
+  document.querySelector('.popup_wrapper').remove();
+  // getPopup(settings);
+}
+
+function settingsHendler() {
+  const newName = this.previousElementSibling.value;
+  if (!newName) return
+  const token = getFromCookie('chat_code');
+  fetch(URL, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    body: JSON.stringify({ name: newName }),
   })
     .then(response => response.json())
     .then(function (data) {
       console.log(data);
       document.querySelector('.popup_wrapper').remove();
+      fetch('https://chat1-341409.oa.r.appspot.com/api/user/me', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Authorization': `Bearer ${token}`
+        },
+      })
+        .then(response => response.json())
+        .then(function (data) {
+          console.log('Проверка, что на сервере имя изменилось:', data);
+        })
     });
-  setTimeout(function () {
-    document.querySelector('.popup_wrapper').remove();
-    getPopup(verification);
-  }, 2000);
+}
 
+function saveInCookie(key, value) {
+  document.cookie = `${key}=${value}`;
+}
+
+function getFromCookie(key) {
+  const cookieObj = Object.fromEntries(document.cookie.split('; ').map(item => item.split('=')));
+  return cookieObj[key];
 }
