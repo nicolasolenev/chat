@@ -1,25 +1,27 @@
-import { UI } from './view.js'
+import { UI } from './view.js';
+
+const URL = 'https://chat1-341409.oa.r.appspot.com/api/user';
 
 const authorization = {
   title: 'Авторизация',
   form_name: 'Почта:',
   placeholder: '',
   btn_name: 'Получить код',
-}
+};
 
 const settings = {
   title: 'Настройки',
   form_name: 'Имя в чате',
   placeholder: 'имя',
   btn_name: '->',
-}
+};
 
 const verification = {
   title: 'Подтверждение',
   form_name: 'Код:',
   placeholder: '',
   btn_name: 'Войти',
-}
+};
 
 scrollChatWindowToBottom();
 
@@ -98,18 +100,18 @@ function authorizationHendler() {
   const mail = {
     email: this.previousElementSibling.value,
   }
-  // fetch('https://chat1-341409.oa.r.appspot.com/api/user', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json;charset=utf-8'
-  //   },
-  //   body: JSON.stringify(mail)
-  // })
-  //   .then(response => response.json())
-  //   .then(function (data) {
-  //     console.log(data);
-  //     document.querySelector('.popup_wrapper').remove();
-  //   });
+  fetch(URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(mail)
+  })
+    .then(response => response.json())
+    .then(function (data) {
+      console.log(data);
+      document.querySelector('.popup_wrapper').remove();
+    });
   setTimeout(function () {
     document.querySelector('.popup_wrapper').remove();
     getPopup(verification);
