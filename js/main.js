@@ -98,26 +98,17 @@ function authorizationHendler() {
     body: JSON.stringify({ email: this.previousElementSibling.value })
   })
     .then(response => response.json())
-    .then(function (data) {
-      console.log('Создали аккаунт:', data);
+    .then(function () {
       document.querySelector('.popup_wrapper').remove();
       getPopup(verification);
     });
-  // setTimeout(function () {
-  //   document.querySelector('.popup_wrapper').remove();
-  //   getPopup(verification);
-  //   console.log();
-  // }, 2000);
-
 }
 
 function verificationHendler() {
   const codeField = this.previousElementSibling;
   if (!codeField.value) return
   saveInCookie('chat_code', codeField.value);
-  console.log('Сохранили код в куки');
   document.querySelector('.popup_wrapper').remove();
-  // getPopup(settings);
 }
 
 function settingsHendler() {
@@ -133,8 +124,7 @@ function settingsHendler() {
     body: JSON.stringify({ name: newName }),
   })
     .then(response => response.json())
-    .then(function (data) {
-      console.log(data);
+    .then(function () {
       document.querySelector('.popup_wrapper').remove();
       fetch('https://chat1-341409.oa.r.appspot.com/api/user/me', {
         method: 'GET',
