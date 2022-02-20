@@ -1,6 +1,7 @@
 import { UI } from './view.js';
 
 const URL = 'https://chat1-341409.oa.r.appspot.com/api/user';
+const KEY_CODE = 'chat_code';
 
 const authorization = {
   title: 'Авторизация',
@@ -107,14 +108,14 @@ function authorizationHendler() {
 function verificationHendler() {
   const codeField = this.previousElementSibling;
   if (!codeField.value) return
-  saveInCookie('chat_code', codeField.value);
+  saveInCookie(KEY_CODE, codeField.value);
   document.querySelector('.popup_wrapper').remove();
 }
 
 function settingsHendler() {
   const newName = this.previousElementSibling.value;
   if (!newName) return
-  const token = getFromCookie('chat_code');
+  const token = getFromCookie(KEY_CODE);
   fetch(URL, {
     method: 'PATCH',
     headers: {
