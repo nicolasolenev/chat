@@ -4,7 +4,7 @@ import { MAIN } from './main.js';
 MAIN.scrollChatWindowToBottom();
 
 UI.MESSAGE_FORM.addEventListener('submit', function () {
-  MAIN.renderMessage(UI.MESSAGE_INPUT.value);
+  MAIN.renderMessage(UI.MESSAGE_INPUT.value, new Date(), 'Я');
   this.reset();
 });
 

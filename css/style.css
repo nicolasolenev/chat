@@ -85,7 +85,6 @@
 }
 
 .any_message {
-  display: none;
   align-self: flex-start;
   background: rgb(240 213 55 / 83%);
 }
