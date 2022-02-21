@@ -1,151 +1,165 @@
-import { UI } from './view.js';
+import UI from './view.js';
+import COOKIE from './cookie.js';
+import API from './api.js';
 
-const URL = 'https://chat1-341409.oa.r.appspot.com/api/user';
-const KEY_CODE = 'chat_code';
+export const MAIN = {
 
-const authorization = {
-  title: 'Авторизация',
-  form_name: 'Почта:',
-  placeholder: '',
-  btn_name: 'Получить код',
-};
+  URL: 'https://chat1-341409.oa.r.appspot.com',
+  SETTINGS: 'SETTINGS',
+  AUTHORIZATION: 'AUTHORIZATION',
+  VERIFICATION: 'VERIFICATION',
+  REQUEST_PATH: '/api/user',
+  REQUEST_PATH_ME: '/api/user/me',
 
-const settings = {
-  title: 'Настройки',
-  form_name: 'Имя в чате',
-  placeholder: 'имя',
-  btn_name: '->',
-};
+  scrollChatWindowToBottom() {
+    UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
+  },
 
-const verification = {
-  title: 'Подтверждение',
-  form_name: 'Код:',
-  placeholder: '',
-  btn_name: 'Войти',
-};
+  getTime() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    return (hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes);
+  },
 
-scrollChatWindowToBottom();
+  getInputValue() {
+    return document.querySelector('.popup__input').value;
+  },
 
-UI.MESSAGE_FORM.addEventListener('submit', function () {
-  if (!UI.MESSAGE_INPUT.value) return
-  const message = UI.MESSAGE_TEMPLATE.content.cloneNode('deep');
-  message.querySelector('.message').innerText = 'Я: ' + UI.MESSAGE_INPUT.value;
-  this.reset();
-  message.querySelector('.time').innerText = getTime();
-  UI.CHAT_WINDOW.append(message);
-  scrollChatWindowToBottom();
-});
+  renderMessage(text) {
+    if (!text) return
+    const message = UI.MESSAGE_TEMPLATE.content.cloneNode('deep');
+    message.querySelector('.message').innerText = 'Я: ' + text;
+    message.querySelector('.time').innerText = getTime();
+    UI.CHAT_WINDOW.append(message);
+    scrollChatWindowToBottom();
+  },
 
+  renderPopup(type) {
+    const popup = UI.POPUP_TEMPLATE[type].content.cloneNode('deep');
+    popup.querySelector('.popup__exit').addEventListener('click', function () {
+      this.closest('.popup_wrapper').remove();
+    });
 
-UI.SETTINGS_BTN.addEventListener('click', function () {
-  getPopup(settings);
-});
+    switch (type) {
+      case this.SETTINGS:
+        popup.querySelector('.popup__main').classList.add('popup__settings');
+        popup.querySelector('.chat__btn').addEventListener('click', this.settingsHendler);
+        break;
+      case this.AUTHORIZATION:
+        popup.querySelector('.chat__btn').addEventListener('click', this.authorizationHendler);
+        break;
+      case this.VERIFICATION:
+        popup.querySelector('.chat__btn').addEventListener('click', this.verificationHendler);
+        break;
+    }
 
-UI.EXIT_BTN.addEventListener('click', function () {
-  getPopup(authorization);
-});
+    UI.CHAT.append(popup);
+  },
 
+  authorizationHendler() {
+    const userMail = this.getInputValue();
+    if (!userMail) return
+    API.sendRequest({
+      url: this.URL + this.REQUEST_PATH, method: API.method.POST, bodyObj: { email: userMail }, onSuccess: console.log, onError: console.log
+    });
+    document.querySelector('.popup_wrapper').remove();
+    this.renderPopup(this.VERIFICATION);
+  },
 
-// <-- F U N C T I O N S -->
+  verificationHendler() {
+    const code = this.getInputValue();
+    if (!code) return
+    COOKIE.saveInCookie(COOKIE.KEY_CODE, code);
+    document.querySelector('.popup_wrapper').remove();
+  },
 
-function scrollChatWindowToBottom() {
-  UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
+  settingsHendler() {
+    const userName = this.getInputValue();
+    if (!userName) return
+    API.sendRequest({ url: this.URL + this.REQUEST_PATH, method: API.method.PATCH, bodyObj: { name: userName }, onSuccess: console.log, onError: console.log });
+    document.querySelector('.popup_wrapper').remove();
+  },
+
 }
 
-function getTime() {
-  const now = new Date();
-  let hours = now.getHours();
-  hours = hours < 10 ? '0' + hours : hours;
-  let minutes = now.getMinutes();
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  return hours + ':' + minutes;
-}
-
-function getPopup(obj) {
-  const popup = UI.POPUP_TEMPLATE.content.cloneNode('deep');
-  popup.querySelector('.popup_title').innerText = obj.title;
-  popup.querySelector('.popup__main_title').innerText = obj.form_name;
-  popup.querySelector('.popup__input').setAttribute('placeholder', obj.placeholder);
-  popup.querySelector('.chat__btn').innerText = obj.btn_name;
-  popup.querySelector('.popup__exit').addEventListener('click', function () {
-    this.closest('.popup_wrapper').remove();
-  });
-
-  switch (obj.title) {
-    case settings.title:
-      popup.querySelector('.popup__main').classList.add('popup__settings');
-      popup.querySelector('.chat__btn').addEventListener('click', settingsHendler);
-      break;
-    case authorization.title:
-      popup.querySelector('.chat__btn').addEventListener('click', authorizationHendler);
-      break;
-    case verification.title:
-      popup.querySelector('.chat__btn').addEventListener('click', verificationHendler);
-      break;
+for (let key in MAIN) {
+  if (typeof MAIN[key] == 'function') {
+    MAIN[key] = MAIN[key].bind(MAIN);
   }
-
-  UI.CHAT.append(popup);
 }
 
 
-function authorizationHendler() {
-  const mailField = this.previousElementSibling;
-  if (!mailField.value) return
-  fetch(URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8'
-    },
-    body: JSON.stringify({ email: this.previousElementSibling.value })
-  })
-    .then(response => response.json())
-    .then(function () {
-      document.querySelector('.popup_wrapper').remove();
-      getPopup(verification);
-    });
-}
+// const URL = 'https://chat1-341409.oa.r.appspot.com';
+// const [SETTINGS, AUTHORIZATION, VERIFICATION] = ['SETTINGS', 'AUTHORIZATION', 'VERIFICATION'];
 
-function verificationHendler() {
-  const codeField = this.previousElementSibling;
-  if (!codeField.value) return
-  saveInCookie(KEY_CODE, codeField.value);
-  document.querySelector('.popup_wrapper').remove();
-}
+// function scrollChatWindowToBottom() {
+//   UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
+// }
 
-function settingsHendler() {
-  const newName = this.previousElementSibling.value;
-  if (!newName) return
-  const token = getFromCookie(KEY_CODE);
-  fetch(URL, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json;charset=utf-8',
-    },
-    body: JSON.stringify({ name: newName }),
-  })
-    .then(response => response.json())
-    .then(function () {
-      document.querySelector('.popup_wrapper').remove();
-      fetch('https://chat1-341409.oa.r.appspot.com/api/user/me', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Authorization': `Bearer ${token}`
-        },
-      })
-        .then(response => response.json())
-        .then(function (data) {
-          console.log('Проверка, что на сервере имя изменилось:', data);
-        })
-    });
-}
+// function getTime() {
+//   const now = new Date();
+//   const hours = now.getHours();
+//   const minutes = now.getMinutes();
+//   return (hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes);
+// }
 
-function saveInCookie(key, value) {
-  document.cookie = `${key}=${value}`;
-}
+// function renderMessage(text) {
+//   if (!text) return
+//   const message = UI.MESSAGE_TEMPLATE.content.cloneNode('deep');
+//   message.querySelector('.message').innerText = 'Я: ' + text;
+//   message.querySelector('.time').innerText = getTime();
+//   UI.CHAT_WINDOW.append(message);
+//   scrollChatWindowToBottom();
+// }
 
-function getFromCookie(key) {
-  const cookieObj = Object.fromEntries(document.cookie.split('; ').map(item => item.split('=')));
-  return cookieObj[key];
-}
+// function renderPopup(type) {
+//   const popup = UI.POPUP_TEMPLATE[type].content.cloneNode('deep');
+//   popup.querySelector('.popup__exit').addEventListener('click', function () {
+//     this.closest('.popup_wrapper').remove();
+//   });
+
+//   switch (type) {
+//     case SETTINGS:
+//       popup.querySelector('.popup__main').classList.add('popup__settings');
+//       popup.querySelector('.chat__btn').addEventListener('click', settingsHendler);
+//       break;
+//     case AUTHORIZATION:
+//       popup.querySelector('.chat__btn').addEventListener('click', authorizationHendler);
+//       break;
+//     case VERIFICATION:
+//       popup.querySelector('.chat__btn').addEventListener('click', verificationHendler);
+//       break;
+//   }
+
+//   UI.CHAT.append(popup);
+// }
+
+
+// function authorizationHendler() {
+//   const userMail = this.previousElementSibling.value;
+//   if (!userMail) return
+//   API.sendRequest({ url: URL + '/api/user', method: API.method.POST, bodyObj: { email: userMail }, onSuccess: console.log, onError: console.log });
+//   document.querySelector('.popup_wrapper').remove();
+//   renderPopup(VERIFICATION);
+// }
+
+// function verificationHendler() {
+//   const code = this.previousElementSibling.value;
+//   if (!code) return
+//   COOKIE.saveInCookie(COOKIE.KEY_CODE, code);
+//   document.querySelector('.popup_wrapper').remove();
+// }
+
+// function settingsHendler() {
+//   const userName = this.previousElementSibling.value;
+//   if (!userName) return
+//   const token = COOKIE.getFromCookie(COOKIE.KEY_CODE);
+//   API.sendRequest({ url: URL + '/api/user', method: API.method.PATCH, bodyObj: { name: userName }, onSuccess: console.log, onError: console.log });
+//   document.querySelector('.popup_wrapper').remove();
+// }
+
+
+// sendRequest({ url: URL + '/api/user/me', method: method.GET, onSuccess: console.log, onError: console.log });
+
+// export { SETTINGS, AUTHORIZATION, renderMessage, renderPopup, scrollChatWindowToBottom }

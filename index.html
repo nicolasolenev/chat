@@ -44,18 +44,54 @@
         <button class="chat__btn">-></button>
       </form>
 
-      <template id="popup_template">
+      <template id="popup_authorization_template" class="popup_template">
         <div class="popup_wrapper">
           <div class="popup">
             <div class="popup__header">
-              <div class="popup_title"></div>
+              <div class="popup_title">Авторизация</div>
               <div class="popup__exit">+</div>
             </div>
 
             <div class="popup__main">
-              <div class="popup__main_title"></div>
+              <div class="popup__main_title">Почта:</div>
               <input class="popup__input" type="text">
-              <button class="chat__btn"></button>
+              <button class="chat__btn">Получить код</button>
+            </div>
+          </div>
+
+        </div>
+      </template>
+
+      <template id="popup_verification_template" class="popup_template">
+        <div class="popup_wrapper">
+          <div class="popup">
+            <div class="popup__header">
+              <div class="popup_title">Подтверждение</div>
+              <div class="popup__exit">+</div>
+            </div>
+
+            <div class="popup__main">
+              <div class="popup__main_title">Код</div>
+              <input class="popup__input" type="text">
+              <button class="chat__btn">Войти</button>
+            </div>
+          </div>
+
+        </div>
+      </template>
+
+      <template id="popup_settings_template" class="popup_template">
+        <div class="popup_wrapper popup__settings">
+          <div class="popup">
+            <div class="popup__header">
+              <div class="popup_title">Настройки</div>
+              <div class="popup__exit">+</div>
+            </div>
+
+            <div class="popup__main">
+              <div class="popup__main_title">Имя в чате</div>
+              <input class="popup__input" type="text">
+              <button class="chat__btn">-></button>
             </div>
           </div>
 
@@ -66,7 +102,7 @@
 
   </main>
 
-  <script type="module" src="./js/main.js"></script>
+  <script type="module" src="./js/app.js"></script>
 </body>
 
 </html>
