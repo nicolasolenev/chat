@@ -10,6 +10,7 @@ export const MAIN = {
   VERIFICATION: 'VERIFICATION',
   REQUEST_PATH: '/api/user',
   REQUEST_PATH_ME: '/api/user/me',
+  REQUEST_MESSAGE: '/api/messages/',
 
   scrollChatWindowToBottom() {
     UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
@@ -27,6 +28,17 @@ export const MAIN = {
 
   removePopup() {
     document.querySelector('.popup_wrapper').remove();
+  },
+
+  downloadMessages() {
+    API.sendRequest({
+      url: MAIN.URL + MAIN.REQUEST_MESSAGE, method: API.method.GET, onSuccess: function (data) {
+        data.messages.forEach(item => {
+          const [userName, message, time] = [item.username, item.message, item.updatedAt];
+          MAIN.renderMessage(message, new Date(time), userName);
+        })
+      }, onError: console.log
+    })
   },
 
   renderMessage(text, date, userName) {
@@ -72,7 +84,7 @@ export const MAIN = {
     this.renderPopup(this.VERIFICATION);
   },
 
-  async verificationHendler() {
+  verificationHendler() {
     const code = this.getInputValue();
     if (!code) return
 
@@ -99,19 +111,3 @@ for (let key in MAIN) {
     MAIN[key] = MAIN[key].bind(MAIN);
   }
 }
-
-
-API.sendRequest({
-  url: 'https://chat1-341409.oa.r.appspot.com/api/messages/', method: API.method.GET, onSuccess: (data) => {
-    console.log(data.messages);
-    data.messages.forEach(item => {
-      const [userName, message, time] = [item.username, item.message, item.updatedAt];
-      MAIN.renderMessage(message, new Date(time), userName);
-    })
-  }, onError: console.log
-})
-
-
-
-
-// API.sendRequest({ url: MAIN.URL + MAIN.REQUEST_PATH_ME, method: API.method.GET, onSuccess: console.log, onError: console.log });

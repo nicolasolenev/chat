@@ -1,7 +1,7 @@
 import UI from './view.js';
 import { MAIN } from './main.js';
 
-MAIN.scrollChatWindowToBottom();
+MAIN.downloadMessages();
 
 UI.MESSAGE_FORM.addEventListener('submit', function () {
   MAIN.renderMessage(UI.MESSAGE_INPUT.value, new Date(), 'Я');
