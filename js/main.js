@@ -18,11 +18,9 @@ const POPUP = {
 };
 
 
-
 function scrollChatWindowToBottom() {
-  UI.CHAT_WINDOW.scrollTop = UI.CHAT_WINDOW.scrollHeight;
+  UI.CHAT.WINDOW.scrollTop = UI.CHAT.WINDOW.scrollHeight;
 }
-
 
 
 function getTime(date) {
@@ -32,11 +30,9 @@ function getTime(date) {
 }
 
 
-
 function getInputValue() {
   return document.querySelector('.popup__input').value;
 }
-
 
 
 function removePopup() {
@@ -44,9 +40,7 @@ function removePopup() {
 }
 
 
-
 function downloadMessages() {
-
   API.sendRequest({
     url: URL.DOMAIN + URL.PATH.MESSAGES,
     method: API.method.GET,
@@ -57,36 +51,29 @@ function downloadMessages() {
 
     onError: console.log
   })
-
 }
 
 
-
 function renderMessage(text, date, userName) {
-
   if (!text) return
 
-  const message = UI.MESSAGE_TEMPLATE.content.cloneNode('deep');
+  const message = UI.MESSAGE.TEMPLATE.content.cloneNode('deep');
   message.querySelector('.message').innerText = userName + ': ' + text;
   message.querySelector('.time').innerText = getTime(date);
 
   if (userName !== 'Я')
     message.querySelector('.chat__message').classList.add('any_message');
 
-  UI.CHAT_WINDOW.append(message);
+  UI.CHAT.WINDOW.append(message);
   scrollChatWindowToBottom();
-
 }
 
 
-
 function renderPopup(type) {
-
   const popup = UI.POPUP_TEMPLATE[type].content.cloneNode('deep');
   popup.querySelector('.popup__exit').addEventListener('click', () => removePopup());
 
   switch (type) {
-
     case POPUP.SETTINGS:
       popup.querySelector('.popup__main').classList.add('popup__settings');
       popup.querySelector('.chat__btn').addEventListener('click', settingsHendler);
@@ -99,17 +86,13 @@ function renderPopup(type) {
     case POPUP.VERIFICATION:
       popup.querySelector('.chat__btn').addEventListener('click', verificationHendler);
       break;
-
   }
 
-  UI.CHAT.append(popup);
-
+  UI.APP.append(popup);
 }
 
 
-
 function authorizationHendler() {
-
   const userMail = getInputValue();
 
   if (!userMail) return
@@ -126,13 +109,10 @@ function authorizationHendler() {
 
   removePopup();
   renderPopup(POPUP.VERIFICATION);
-
 }
 
 
-
 function verificationHendler() {
-
   const code = getInputValue();
 
   if (!code) return
@@ -148,13 +128,10 @@ function verificationHendler() {
 
     onError: console.log
   });
-
 }
 
 
-
 function settingsHendler() {
-
   const userName = getInputValue();
 
   if (!userName) return
@@ -170,9 +147,7 @@ function settingsHendler() {
   });
 
   removePopup();
-
 }
-
 
 
 export { downloadMessages, renderMessage, renderPopup, POPUP }
