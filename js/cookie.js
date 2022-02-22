@@ -1,10 +1,12 @@
 export default {
   KEY_CODE: 'chat_code',
-  saveInCookie(key, value) {
-    document.cookie = `${key}=${value}`;
+
+  set(key, value) {
+    document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
   },
-  getFromCookie(key) {
+
+  get(key) {
     const cookieObj = Object.fromEntries(document.cookie.split('; ').map(item => item.split('=')));
-    return cookieObj[key];
+    return decodeURIComponent(cookieObj[key]);
   }
 };
