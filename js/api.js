@@ -1,15 +1,15 @@
-import COOKIE from './cookie.js';
+import COOKIE from './cookie.js'
+import { URL, KEY } from './app.js'
 
 export default {
 
-  method: {
+  METHOD: {
     GET: 'GET',
     POST: 'POST',
     PATCH: 'PATCH',
   },
 
   sendRequest(options) {
-
     const fetchBody = {
       method: options.method,
       headers: {
@@ -17,15 +17,19 @@ export default {
       },
     }
 
-    if (options.method !== this.method.POST)
-      fetchBody.headers.Authorization = `Bearer ${COOKIE.getFromCookie(COOKIE.KEY_CODE)}`;
+    if (options.method !== this.METHOD.POST)
+      fetchBody.headers.Authorization = `Bearer ${COOKIE.get(KEY.CODE)}`;
 
     if (options.bodyObj) fetchBody.body = JSON.stringify(options.bodyObj);
 
-    fetch(options.url, fetchBody)
-      .then(response => response.json())
-      .then(options.onSuccess)
-      .catch(options.onError)
+    return fetch(options.url, fetchBody)
   },
 
+  async checkAccount() {
+    const response = await this.sendRequest({
+      url: URL.ME,
+      method: this.METHOD.GET,
+    });
+    return response.ok;
+  },
 }

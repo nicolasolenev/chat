@@ -50,6 +50,8 @@
 }
 
 .chat__window_wrapper {
+  background-image: url('../img/bg.jpg');
+  background-size: cover;
   border: 1px solid #000;
   width: 304px;
   height: 437px;
@@ -76,10 +78,10 @@
   background: rgb(95 174 248 / 63%);
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 1px 5px;
   margin-bottom: 8px;
   font-size: 16px;
-  line-height: 19px;
+  line-height: 16px;
   align-items: flex-end;
   border-radius: 10px;
 }
@@ -111,12 +113,13 @@
 
 .message {
   margin-bottom: 4px;
+  font-size: 13px;
 }
 
 .time {
   font-style: italic;
   font-weight: 300;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 16px;
 }
 /* /C H A T   M A I N   W I N D O W */
