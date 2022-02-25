@@ -1,8 +1,8 @@
 import API from './api.js'
-import { URL, socket, KEY } from './app.js'
+import { URL, socket, COOKIE_KEY } from './app.js'
 import COOKIE from './cookie.js'
 import UI from './view.js'
-import getTime from './time.js'
+import { getTime, getDay, getMonth } from './time.js'
 
 function renderMessage(text, date, userName, data) {
   if (!text) return
@@ -11,11 +11,12 @@ function renderMessage(text, date, userName, data) {
   message.querySelector('.message').innerText = userName + ': ' + text;
   message.querySelector('.time').innerText = getTime(date);
 
-  if (data.user.email !== COOKIE.get(KEY.MAIL))
+  if (data.user.email !== COOKIE.get(COOKIE_KEY.MAIL))
     message.querySelector('.chat__message').classList.add('any_message');
 
-  UI.CHAT.WINDOW.append(message);
-  scrollChatWindowToBottom();
+  // UI.CHAT.WINDOW.append(message);
+  // scrollChatWindowToBottom();
+  return message;
 }
 
 
@@ -28,19 +29,29 @@ function sendMessage(messageText) {
 }
 
 
-function downloadMessages() {
-  API.sendRequest({
+async function downloadMessages() {
+  const array = [];
+  const response = await API.sendRequest({
     url: URL.MESSAGES,
-    method: API.METHOD.GET,
+    method: 'GET',
+  }, COOKIE.get(COOKIE_KEY.TOKEN))
+  // .then(response => response.json()).then(function (data) {
+  // let day;
+  // let month;
+  // data.messages.forEach(item => {
+  //   array.push(item);
+  //   if (day !== getDay(item.updatedAt)) {
+  //     renderDate(getMonth(item.updatedAt), getDay(item.updatedAt));
+  //     day = getDay(item.updatedAt);
+  //     month = getMonth(item.updatedAt);
+  //   }
+  // renderMessage(item.text, item.updatedAt, item.user.name, item);
+  // })
+  // console.log(array.splice(-20, 20));
+  // })
 
-    onSuccess: function (data) {
-      data.messages.forEach(item => renderMessage(item.message, item.updatedAt, item.username))
-    },
-  })
-}
 
-function scrollChatWindowToBottom() {
-  UI.CHAT.WINDOW.scrollTop = UI.CHAT.WINDOW.scrollHeight;
+  return response.json();
 }
 
 export { renderMessage, sendMessage, downloadMessages }

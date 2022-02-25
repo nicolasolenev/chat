@@ -13,6 +13,8 @@ export default {
     TEMPLATE: document.getElementById('message_template'),
   },
 
+  DATE: document.getElementById('date_template'),
+
   POPUP_TEMPLATE: {
     AUTHORIZATION: document.getElementById('popup_authorization_template'),
     VERIFICATION: document.getElementById('popup_verification_template'),

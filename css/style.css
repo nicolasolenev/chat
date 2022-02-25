@@ -58,6 +58,7 @@
   margin-bottom: 8px;
   position: relative;
   padding: 10px;
+  overflow: hidden;
 }
 
 .chat__window {
@@ -114,6 +115,7 @@
 .message {
   margin-bottom: 4px;
   font-size: 13px;
+  word-break: break-all;
 }
 
 .time {
@@ -122,6 +124,37 @@
   font-size: 12px;
   line-height: 16px;
 }
+
+.history_loaded {
+  display: flex;
+  align-self: center;
+  background: #dcdadc91;
+  border-radius: 20px;
+  padding: 0 20px;
+  margin: 10px 0;
+  color: #1d1d1d82;
+}
+
+
+#test {
+  position: absolute;
+  z-index: 1;
+  top: -30px;
+  left: calc(50% - 45px);
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.date {
+  display: flex;
+  align-self: center;
+  background: #dcdadc91;
+  border-radius: 20px;
+  padding: 0 20px;
+  margin: 10px 0;
+  color: #1d1d1d82;
+}
+
 /* /C H A T   M A I N   W I N D O W */
 
 

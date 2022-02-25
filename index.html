@@ -25,13 +25,32 @@
       </div>
 
       <div class="chat__window_wrapper">
+
+        <template id="date_template">
+          <div class="date">
+            <div class="content"></div>
+          </div>
+        </template>
+
+        <div class="date" id="test">
+          <div class="content">23 Feb.</div>
+        </div>
+
         <div id="chat_window" class="chat__window">
+
+          <template id="history_loaded_template">
+            <div class="history_loaded">
+              Вся история загружена
+            </div>
+          </template>
+
           <template id="message_template">
             <div class="chat__message">
               <div class="message"></div>
               <span class="time"></span>
             </div>
           </template>
+
         </div>
       </div>
 

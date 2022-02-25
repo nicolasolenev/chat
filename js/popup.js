@@ -1,14 +1,16 @@
 import UI from './view.js'
 import COOKIE from './cookie.js'
 import API from './api.js'
-import { POPUP, URL, setSocket, KEY } from './app.js'
+import { POPUP, URL, setSocket, COOKIE_KEY, me, startChat } from './app.js'
 import { downloadMessages } from './message.js'
 
 function renderPopup(type) {
   const popup = UI.POPUP_TEMPLATE[type].content.cloneNode('deep');
   popup.querySelector('.popup__exit').addEventListener('click', async function () {
     removePopup();
-    if (!(await API.checkAccount())) {
+    const response = await API.sendRequest(me, COOKIE.get(COOKIE_KEY.TOKEN));
+    const isValidAccount = await response.ok;
+    if (!isValidAccount) {
       renderPopup(POPUP.AUTHORIZATION);
     }
   });
@@ -45,8 +47,8 @@ async function authorizationHandler() {
 
   const response = await API.sendRequest({
     url: URL.USER,
-    method: API.METHOD.POST,
-    bodyObj: { email: userMail },
+    method: 'POST',
+    body: { email: userMail },
   });
 
   if (response.ok) {
@@ -63,19 +65,22 @@ async function verificationHandler() {
 
   if (!code) return
 
-  COOKIE.set(KEY.CODE, code);
-  if (await API.checkAccount()) {
-    const response = await API.sendRequest({
-      url: URL.ME,
-      method: API.METHOD.GET,
-    });
-    const user = await response.json();
-    COOKIE.set(KEY.MAIL, user.email);
-    setSocket();
-    downloadMessages();
-    removePopup();
-  }
-  else {
+  COOKIE.set(COOKIE_KEY.TOKEN, code);
+  try {
+    const response = await API.sendRequest(me, COOKIE.get(COOKIE_KEY.TOKEN));
+    const isValidAccount = await response.ok;
+    if (isValidAccount) {
+      const user = await response.json();
+      COOKIE.set(COOKIE_KEY.MAIL, user.email);
+      setSocket();
+      removePopup();
+      startChat();
+    }
+    else {
+      document.querySelector('.popup__input').value = '';
+      alert('Вы ввели недействительный код.');
+    }
+  } catch (e) {
     document.querySelector('.popup__input').value = '';
     alert('Вы ввели недействительный код.');
   }
@@ -90,9 +95,9 @@ async function settingsHandler() {
 
   const response = await API.sendRequest({
     url: URL.USER,
-    method: API.METHOD.PATCH,
-    bodyObj: { name: userName },
-  });
+    method: 'PATCH',
+    body: { name: userName },
+  }, COOKIE.get(COOKIE_KEY.TOKEN));
 
   if (await response.ok) {
     location.reload();
