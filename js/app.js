@@ -49,6 +49,8 @@ UI.CHAT.EXIT_BTN.addEventListener('click', function () {
 
 UI.CHAT.WINDOW.addEventListener('scroll', function () {
   if (this.scrollTop < 530) {
+    const previousScroll = UI.CHAT.WINDOW.scrollHeight - this.scrollTop;
+
     history.splice(-20, 20).reverse().forEach(item => {
       if (item.text) {
         UI.CHAT.WINDOW.prepend((createMessageNode(item.text, getTime(item.updatedAt), item.user.name, item, UI.MESSAGE.TEMPLATE, COOKIE.get(COOKIE_KEY.MAIL))));
@@ -60,6 +62,8 @@ UI.CHAT.WINDOW.addEventListener('scroll', function () {
     if (history.length === 0 && !UI.CHAT.WINDOW.contains(UI.CHAT.WINDOW.querySelector('.history_loaded'))) {
       UI.CHAT.WINDOW.prepend(document.getElementById('history_loaded_template').content.cloneNode('deep'));
     }
+
+    this.scrollTop = UI.CHAT.WINDOW.scrollHeight - previousScroll;
   }
 });
 
@@ -111,11 +115,7 @@ function setSocket() {
 }
 
 function scrollChatWindowToBottom() {
-  console.log('call scrollChatWindowToBottom');
-  console.log(UI.CHAT.WINDOW.scrollTop, UI.CHAT.WINDOW.scrollHeight);
-  if (UI.CHAT.WINDOW.scrollTop > UI.CHAT.WINDOW.scrollHeight - 600 || UI.CHAT.WINDOW.scrollTop === 0) {
-    UI.CHAT.WINDOW.scrollTop = UI.CHAT.WINDOW.scrollHeight;
-  }
+  UI.CHAT.WINDOW.scrollTop = UI.CHAT.WINDOW.scrollHeight;
 }
 
 
