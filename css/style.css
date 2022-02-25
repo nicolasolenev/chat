@@ -231,3 +231,32 @@
   width: 207px;
 }
 /* /P O P U P */
+
+@media (max-width: 700px) {
+.main {
+  margin: 0;
+}
+.chat {
+height: 93vh;
+width: 100%;
+}
+
+.chat__window_wrapper {
+  width: 100%;
+  height: calc(100% - 79px);
+}
+
+.chat__window {
+  width: 100%;
+  max-height: 76vh;
+}
+
+.chat__input {
+  width: calc(100% - 40px);
+}
+
+.popup_wrapper {
+  width: 100%;
+}
+
+}

@@ -13,7 +13,7 @@ export default {
     TEMPLATE: document.getElementById('message_template'),
   },
 
-  DATE: document.getElementById('date_template'),
+  DATE_TEMPLATE: document.getElementById('date_template'),
 
   POPUP_TEMPLATE: {
     AUTHORIZATION: document.getElementById('popup_authorization_template'),

@@ -1,57 +1,30 @@
-import API from './api.js'
-import { URL, socket, COOKIE_KEY } from './app.js'
-import COOKIE from './cookie.js'
-import UI from './view.js'
-import { getTime, getDay, getMonth } from './time.js'
 
-function renderMessage(text, date, userName, data) {
-  if (!text) return
+function createMessageNode(text, time, userName, data, template, userMail) {
+  if (!text) return;
 
-  const message = UI.MESSAGE.TEMPLATE.content.cloneNode('deep');
+  const message = template.content.cloneNode('deep');
   message.querySelector('.message').innerText = userName + ': ' + text;
-  message.querySelector('.time').innerText = getTime(date);
+  message.querySelector('.time').innerText = time;
 
-  if (data.user.email !== COOKIE.get(COOKIE_KEY.MAIL))
+  if (data.user.email !== userMail)
     message.querySelector('.chat__message').classList.add('any_message');
 
-  // UI.CHAT.WINDOW.append(message);
-  // scrollChatWindowToBottom();
   return message;
 }
 
 
-function sendMessage(messageText) {
-  if (!messageText.trim()) return
+function sendMessage(messageText, socket) {
+  if (!messageText.trim()) return;
 
   socket.send(JSON.stringify({
     text: messageText,
   }).trim());
 }
 
-
-async function downloadMessages() {
-  const array = [];
-  const response = await API.sendRequest({
-    url: URL.MESSAGES,
-    method: 'GET',
-  }, COOKIE.get(COOKIE_KEY.TOKEN))
-  // .then(response => response.json()).then(function (data) {
-  // let day;
-  // let month;
-  // data.messages.forEach(item => {
-  //   array.push(item);
-  //   if (day !== getDay(item.updatedAt)) {
-  //     renderDate(getMonth(item.updatedAt), getDay(item.updatedAt));
-  //     day = getDay(item.updatedAt);
-  //     month = getMonth(item.updatedAt);
-  //   }
-  // renderMessage(item.text, item.updatedAt, item.user.name, item);
-  // })
-  // console.log(array.splice(-20, 20));
-  // })
-
-
-  return response.json();
+function createDateNode(template, day, month) {
+  const date = template.content.cloneNode('deep');
+  date.querySelector('.content').innerText = day + ' ' + month;
+  return date;
 }
 
-export { renderMessage, sendMessage, downloadMessages }
+export { createMessageNode, sendMessage, createDateNode }

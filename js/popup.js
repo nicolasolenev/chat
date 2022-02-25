@@ -1,15 +1,17 @@
 import UI from './view.js'
-import COOKIE from './cookie.js'
 import API from './api.js'
+import COOKIE from './cookie.js'
 import { POPUP, URL, setSocket, COOKIE_KEY, me, startChat } from './app.js'
-import { downloadMessages } from './message.js'
 
 function renderPopup(type) {
   const popup = UI.POPUP_TEMPLATE[type].content.cloneNode('deep');
+
   popup.querySelector('.popup__exit').addEventListener('click', async function () {
     removePopup();
+
     const response = await API.sendRequest(me, COOKIE.get(COOKIE_KEY.TOKEN));
     const isValidAccount = await response.ok;
+
     if (!isValidAccount) {
       renderPopup(POPUP.AUTHORIZATION);
     }
@@ -43,7 +45,7 @@ function removePopup() {
 async function authorizationHandler() {
   const userMail = getInputValue();
 
-  if (!userMail) return
+  if (!userMail) return;
 
   const response = await API.sendRequest({
     url: URL.USER,
@@ -63,7 +65,7 @@ async function authorizationHandler() {
 async function verificationHandler() {
   const code = getInputValue();
 
-  if (!code) return
+  if (!code) return;
 
   COOKIE.set(COOKIE_KEY.TOKEN, code);
   try {
@@ -72,7 +74,6 @@ async function verificationHandler() {
     if (isValidAccount) {
       const user = await response.json();
       COOKIE.set(COOKIE_KEY.MAIL, user.email);
-      setSocket();
       removePopup();
       startChat();
     }
@@ -91,7 +92,7 @@ async function verificationHandler() {
 async function settingsHandler() {
   const userName = getInputValue();
 
-  if (!userName) return
+  if (!userName) return;
 
   const response = await API.sendRequest({
     url: URL.USER,
