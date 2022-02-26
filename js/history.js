@@ -17,7 +17,9 @@ async function getHistory(url) {
 
 function renderHistory(history, insertionType) {
   history.forEach(item => {
-    UI.CHAT.WINDOW[insertionType](createMessageNode(item.text, getTime(item.updatedAt), item.user.name, item.user.email, UI.MESSAGE.TEMPLATE, COOKIE.get(COOKIE_KEY.MAIL)));
+    const messageNode = createMessageNode(item.text, getTime(item.updatedAt), item.user.name, item.user.email, UI.MESSAGE.TEMPLATE, COOKIE.get(COOKIE_KEY.MAIL));
+
+    UI.CHAT.WINDOW[insertionType](messageNode);
   });
   if (history.length === 0 && !UI.CHAT.WINDOW.contains(UI.CHAT.WINDOW.querySelector('.history_loaded'))) {
     renderEndHistory();
