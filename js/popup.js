@@ -3,6 +3,7 @@ import API from './api.js'
 import COOKIE from './cookie.js'
 import { POPUP, URL, COOKIE_KEY, me_request, startChat } from './app.js'
 
+
 function renderPopup(type) {
   const popup_node = UI.POPUP_TEMPLATE[type].content.cloneNode('deep');
 
@@ -107,6 +108,7 @@ async function settingsHandler() {
     alert('Возникла ошибка, попробуйте изменить имя позже.');
   }
 }
+
 
 function getInputValue() {
   return document.querySelector('.popup__input').value;

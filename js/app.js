@@ -3,6 +3,7 @@ import API from './api.js'
 import COOKIE from './cookie.js'
 import renderPopup from './popup.js'
 import { getTime } from './time.js'
+import { getHistory, renderHistory } from './history.js'
 import { createMessageNode, sendMessage } from './message.js'
 
 const WS_URL = 'ws://chat1-341409.oa.r.appspot.com/websockets?';
@@ -70,6 +71,7 @@ async function startChat() {
   }
 }
 
+
 function setSocket() {
   socket = new WebSocket(WS_URL + COOKIE.get(COOKIE_KEY.TOKEN));
 
@@ -83,30 +85,9 @@ function setSocket() {
   })
 }
 
+
 function scrollChatWindowToBottom() {
   UI.CHAT.WINDOW.scrollTop = UI.CHAT.WINDOW.scrollHeight;
-}
-
-async function getHistory(url) {
-  const response = await API.sendRequest({
-    url: url,
-    method: 'GET',
-  }, COOKIE.get(COOKIE_KEY.TOKEN));
-
-  return response.json();
-}
-
-function renderHistory(history, insertionType) {
-  history.forEach(item => {
-    UI.CHAT.WINDOW[insertionType](createMessageNode(item.text, getTime(item.updatedAt), item.user.name, item.user.email, UI.MESSAGE.TEMPLATE, COOKIE.get(COOKIE_KEY.MAIL)));
-  });
-  if (history.length === 0 && !UI.CHAT.WINDOW.contains(UI.CHAT.WINDOW.querySelector('.history_loaded'))) {
-    renderHistoryEnd();
-  }
-}
-
-function renderHistoryEnd() {
-  UI.CHAT.WINDOW.prepend(document.getElementById('history_loaded_template').content.cloneNode('deep'));
 }
 
 
