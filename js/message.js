@@ -1,12 +1,11 @@
-
-function createMessageNode(text, time, userName, data, template, userMail) {
+function createMessageNode(text, time, userName, userMail, template, myMail) {
   if (!text) return;
 
   const message = template.content.cloneNode('deep');
   message.querySelector('.message').innerText = userName + ': ' + text;
   message.querySelector('.time').innerText = time;
 
-  if (data.user.email !== userMail)
+  if (userMail !== myMail)
     message.querySelector('.chat__message').classList.add('any_message');
 
   return message;
@@ -21,10 +20,4 @@ function sendMessage(messageText, socket) {
   }).trim());
 }
 
-function createDateNode(template, day, month) {
-  const date = template.content.cloneNode('deep');
-  date.querySelector('.content').innerText = day + ' ' + month;
-  return date;
-}
-
-export { createMessageNode, sendMessage, createDateNode }
+export { createMessageNode, sendMessage }

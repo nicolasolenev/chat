@@ -20,4 +20,5 @@ export default {
     VERIFICATION: document.getElementById('popup_verification_template'),
     SETTINGS: document.getElementById('popup_settings_template'),
   },
+
 }

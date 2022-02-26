@@ -18,14 +18,4 @@ export default {
 
     return fetch(options.url, fetchBody);
   },
-
-  async getHistory(url, token) {
-    const response = await this.sendRequest({
-      url: url,
-      method: 'GET',
-    }, token);
-
-    return response.json();
-  },
-
 }
